@@ -1,0 +1,3 @@
+# Folder to be ignored
+Thirdparty/premake5
+Thirdparty/vulkan
