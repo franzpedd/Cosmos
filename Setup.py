@@ -94,7 +94,35 @@ class Premake5 :
         if(platform.system() == "Linux") : subprocess.call(f"{cls.path}/premake5 gmake2");
         if(platform.system() == "Darwin") : subprocess.call(f"{cls.path}/premake5 xcode4");
 
+class GLFW :
+
+    @classmethod
+    def Clone(cls) :
+
+        if(os.path.isdir("Thirdparty/GLFW") is True) : return;
+
+        dir = os.getcwd();
+        os.chdir("Thirdparty");
+        subprocess.call("git clone https://github.com/glfw/glfw glfw");
+        os.chdir("glfw");
+        subprocess.call("git checkout 3.3-stable");
+        os.chdir(dir);
+
+class Volk :
+
+    @classmethod
+    def Clone(cls) :
+
+        if(os.path.isdir("Thirdparty/volk") is True) : return;
+
+        dir = os.getcwd();
+        os.chdir("Thirdparty");
+        subprocess.call("git clone https://github.com/zeux/volk volk");
+        os.chdir(dir);
+
 # global logic
 Vulkan.Download();
+GLFW.Clone();
+Volk.Clone();
 Premake5.Download();
 Premake5.Generate();

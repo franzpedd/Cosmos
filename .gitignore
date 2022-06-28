@@ -1,3 +1,11 @@
 # Folder to be ignored
+.vs/
+Build/
 Thirdparty/premake5
 Thirdparty/vulkan
+
+# Extensions to be ignored
+**.sln
+**.vcxproj
+**.vcxproj.user
+**.vcxproj.filters
