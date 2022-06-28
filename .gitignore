@@ -1,7 +1,9 @@
 # Folder to be ignored
 .vs/
 Build/
+Thirdparty/glfw
 Thirdparty/premake5
+Thirdparty/volk
 Thirdparty/vulkan
 
 # Extensions to be ignored
