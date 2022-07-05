@@ -20,7 +20,8 @@ project "Editor"
     includedirs
     {
         "Source/",
-        "%{IncludeList.Engine}"
+        "%{IncludeList.Engine}",
+        "%{IncludeList.GLM}"
     }
 
     links

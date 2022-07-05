@@ -2,6 +2,7 @@
 .vs/
 Build/
 Thirdparty/glfw
+Thirdparty/glm
 Thirdparty/premake5
 Thirdparty/volk
 Thirdparty/vulkan

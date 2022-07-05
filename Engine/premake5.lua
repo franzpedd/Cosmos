@@ -25,7 +25,8 @@ project "Engine"
         "Source/",
         "%{IncludeList.Vulkan}",
         "%{IncludeList.Volk}",
-        "%{IncludeList.GLFW}"
+        "%{IncludeList.GLFW}",
+        "%{IncludeList.GLM}"
     }
 
     links
@@ -42,3 +43,9 @@ project "Engine"
         defines { "ENGINE_RELEASE" }
         runtime "Release"
         optimize "On"
+
+    filter "system:windows"
+        disablewarnings
+        {
+            "26812"
+        }

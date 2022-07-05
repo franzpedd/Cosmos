@@ -99,13 +99,27 @@ class GLFW :
     @classmethod
     def Clone(cls) :
 
-        if(os.path.isdir("Thirdparty/GLFW") is True) : return;
+        if(os.path.isdir("Thirdparty/glfw") is True) : return;
 
         dir = os.getcwd();
         os.chdir("Thirdparty");
         subprocess.call("git clone https://github.com/glfw/glfw glfw");
         os.chdir("glfw");
         subprocess.call("git checkout 3.3-stable");
+        os.chdir(dir);
+
+class GLM :
+
+    @classmethod
+    def Clone(cls) :
+
+        if(os.path.isdir("Thirdparty/glm") is True) : return;
+
+        dir = os.getcwd();
+        os.chdir("Thirdparty");
+        subprocess.call("git clone https://github.com/g-truc/glm glm");
+        os.chdir("glm");
+        subprocess.call("git checkout 0.9.8");
         os.chdir(dir);
 
 class Volk :
@@ -123,6 +137,7 @@ class Volk :
 # global logic
 Vulkan.Download();
 GLFW.Clone();
+GLM.Clone();
 Volk.Clone();
 Premake5.Download();
 Premake5.Generate();
