@@ -3,12 +3,12 @@
 
 namespace Engine
 {
-	Renderer::Renderer(Window& windowref)
-		: m_WindowRef(windowref)
+	Renderer::Renderer(Window& window)
+		: m_Window(window)
 	{
 		ENGINE_TRACE("Creating Renderer");
 
-		m_GraphicsContext = GraphicsContext::CreateGraphicsContext(m_WindowRef);
+		m_GraphicsContext = GraphicsContext::CreateGraphicsContext(m_Window);
 	}
 
 	Renderer::~Renderer()

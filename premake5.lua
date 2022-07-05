@@ -1,7 +1,7 @@
 workspace "Cosmos"
     architecture "x86_64"
     configurations { "Debug", "Release" }
-    startproject "Game"
+    startproject "Editor"
 
     Dir = "%{wks.location}/Build/Bin/%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
     Obj = "%{wks.location}/Build/Obj/%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"

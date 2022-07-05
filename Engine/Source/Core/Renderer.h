@@ -10,7 +10,7 @@ namespace Engine
 	public:
 
 		// constructor
-		Renderer(Window& windowref);
+		Renderer(Window& window);
 
 		// destructor
 		~Renderer();
@@ -22,7 +22,7 @@ namespace Engine
 
 	private:
 
-		Window& m_WindowRef;
+		Window& m_Window;
 		UniquePointer<GraphicsContext> m_GraphicsContext;
 
 	};
