@@ -1,6 +1,5 @@
 #include "enpch.h"
 #include "GraphicsContext.h"
-#include "Core/Logger.h"
 
 #include "Vulkan/GraphicsContext.h"
 

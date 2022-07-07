@@ -39,7 +39,7 @@ namespace Engine
 		private:
 
 			const std::vector<const char*> m_ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
-			VkDebugUtilsMessengerEXT m_DebugMessenger = nullptr;
+			VkDebugUtilsMessengerEXT m_DebugMessenger = VK_NULL_HANDLE;
 
 #if defined ENGINE_DEBUG
 			const bool AreValidationEnabled = true;

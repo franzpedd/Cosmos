@@ -37,6 +37,7 @@ namespace Engine
 	{
 		void Validations::Create(VkInstance& instance)
 		{
+			ENGINE_ASSERT((AreValidationEnabled && !CheckValidationLayerSupport()) == false, "Validation layers requested but not available");
 			if (!AreValidationEnabled) return;
 
 			VkDebugUtilsMessengerCreateInfoEXT createInfo{};

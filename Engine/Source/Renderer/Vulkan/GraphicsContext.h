@@ -3,7 +3,11 @@
 #include <volk.h>
 
 #include "Renderer/GraphicsContext.h"
+
+#include "Device.h"
+#include "Instance.h"
 #include "Validations.h"
+
 
 namespace Engine
 {
@@ -19,24 +23,23 @@ namespace Engine
 			// destructor
 			virtual ~GraphicsContext();
 
-		private:
+		public:
 
-			// creates the vulkan instance
-			void CreateInstance();
+			// returns a reference to the instance class
+			inline Instance& GetInstance() { return m_Instance; }
 
-		private:
+			// returns a reference to the validations class
+			inline Validations& GetValidations() { return m_Validations; }
 
-			// prints out the available extensions on instance creation
-			void PrintAvailableExtensions();
-
-			// returns a list of extensions
-			std::vector<const char*> GetRequiredExtensions();
+			// returns a reference to the device class
+			inline Device& GetDevice() { return m_Device; }
 
 		private:
 
 			Window& m_Window;
-			VkInstance m_Instance = nullptr;
+			Instance m_Instance;
 			Validations m_Validations;
+			Device m_Device;
 
 		};
 	}
