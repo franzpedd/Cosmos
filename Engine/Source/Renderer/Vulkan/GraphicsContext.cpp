@@ -14,13 +14,15 @@ namespace Engine
 
 			m_Instance.Create(m_Window, m_Validations);
 			m_Validations.Create(m_Instance.GetNativeInstance());
-			m_Device.Create(m_Instance.GetNativeInstance(), m_Validations);
+			m_Surface.Create(m_Window, m_Instance.GetNativeInstance());
+			m_Device.Create(m_Instance.GetNativeInstance(), m_Validations, m_Surface.GetNativeSurface());
 		}
 
 		GraphicsContext::~GraphicsContext()
 		{
 			m_Device.Destroy();
 			m_Validations.Destroy(m_Instance.GetNativeInstance());
+			m_Surface.Destroy(m_Instance.GetNativeInstance());
 			m_Instance.Destroy();
 		}
 	}

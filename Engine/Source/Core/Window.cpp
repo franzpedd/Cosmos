@@ -52,5 +52,4 @@ namespace Engine
 	{
 		return glfwGetRequiredInstanceExtensions(count);
 	}
-
 }

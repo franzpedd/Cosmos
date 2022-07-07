@@ -6,8 +6,8 @@
 
 #include "Device.h"
 #include "Instance.h"
+#include "Surface.h"
 #include "Validations.h"
-
 
 namespace Engine
 {
@@ -34,12 +34,17 @@ namespace Engine
 			// returns a reference to the device class
 			inline Device& GetDevice() { return m_Device; }
 
+			// returns a reference to the surface class
+			inline Surface& GetSurface() { return m_Surface; }
+
 		private:
 
 			Window& m_Window;
-			Instance m_Instance;
-			Validations m_Validations;
-			Device m_Device;
+
+			Instance m_Instance{};
+			Validations m_Validations{};
+			Device m_Device{};
+			Surface m_Surface{};
 
 		};
 	}

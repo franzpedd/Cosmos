@@ -5,10 +5,10 @@ namespace Engine
 {
 	namespace Vulkan
 	{
-		void Device::Create(VkInstance& instance, Validations& validations)
+		void Device::Create(VkInstance& instance, Validations& validations, VkSurfaceKHR& surface)
 		{
-			PickPhysicalDevice(instance);
-			CreateLogicalDevice(instance, validations);
+			PickPhysicalDevice(instance, surface);
+			CreateLogicalDevice(instance, validations, surface);
 		}
 
 		void Device::Destroy()
@@ -16,7 +16,7 @@ namespace Engine
 			vkDestroyDevice(m_LogicalDevice, nullptr);
 		}
 
-		void Device::PickPhysicalDevice(VkInstance& instance)
+		void Device::PickPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surface)
 		{
 			uint32_t deviceCount = 0;
 			vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -28,7 +28,7 @@ namespace Engine
 
 			for (const auto& device : devices)
 			{
-				int score = RateDeviceSuitability(device);
+				int score = RateDeviceSuitability(device, surface);
 				candidates.insert(std::make_pair(score, device));
 			}
 
@@ -36,13 +36,13 @@ namespace Engine
 			m_PhysicalDevice = candidates.rbegin()->second;
 		}
 
-		int Device::RateDeviceSuitability(VkPhysicalDevice device)
+		int Device::RateDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR& surface)
 		{
 			VkPhysicalDeviceProperties deviceProperties{};
 			vkGetPhysicalDeviceProperties(device, &deviceProperties);
 
 			// discard gpus without graphics queue
-			QueueFamilyIndices indices = FindQueueFamilies(device);
+			QueueFamilyIndices indices = FindQueueFamilies(device, surface);
 			if (indices.graphics.has_value() == 0) return 0;
 
 			int score = 0;
@@ -56,7 +56,7 @@ namespace Engine
 			return score;
 		}
 
-		QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device)
+		QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR& surface)
 		{
 			QueueFamilyIndices indices;
 
@@ -74,6 +74,14 @@ namespace Engine
 					indices.graphics = i;
 				}
 
+				VkBool32 presentSupport;
+				vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+
+				if (presentSupport) // the presentation queue
+				{
+					indices.present = i;
+				}
+
 				if (indices.IsComplete()) // all desired queues were found
 				{
 					break;
@@ -85,28 +93,43 @@ namespace Engine
 			return indices;
 		}
 
-		void Device::CreateLogicalDevice(VkInstance& instance, Validations& validations)
+		void Device::CreateLogicalDevice(VkInstance& instance, Validations& validations, VkSurfaceKHR& surface)
 		{
 			VkPhysicalDeviceFeatures deviceFeatures{};
 
-			QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
+			QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice, surface);
 			auto validationlayer = validations.GetValidations();
 			float priority = 1.0f;
 
-			VkDeviceQueueCreateInfo queueCreateInfo{};
-			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			queueCreateInfo.pNext = nullptr;
-			queueCreateInfo.flags = 0;
-			queueCreateInfo.queueFamilyIndex = indices.graphics.value();
-			queueCreateInfo.queueCount = 1;
-			queueCreateInfo.pQueuePriorities = &priority;
+			// list of all unique queues
+			std::set<uint32_t> uniqueQueues =
+			{
+				indices.graphics.value(),
+				indices.present.value()
+			};
 
+			// populate createinfo for all queues
+			std::vector<VkDeviceQueueCreateInfo> queuesCreateInfos{};
+			for (uint32_t queue : uniqueQueues)
+			{
+				VkDeviceQueueCreateInfo queueCreateInfo{};
+				queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				queueCreateInfo.pNext = nullptr;
+				queueCreateInfo.flags = 0;
+				queueCreateInfo.queueFamilyIndex = queue;
+				queueCreateInfo.queueCount = 1;
+				queueCreateInfo.pQueuePriorities = &priority;
+
+				queuesCreateInfos.push_back(queueCreateInfo);
+			}
+
+			// populate device create info
 			VkDeviceCreateInfo createInfo{};
 			createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 			createInfo.pNext = nullptr;
 			createInfo.flags = 0;
-			createInfo.queueCreateInfoCount = 1;
-			createInfo.pQueueCreateInfos = &queueCreateInfo;
+			createInfo.queueCreateInfoCount = static_cast<uint32_t>(queuesCreateInfos.size());
+			createInfo.pQueueCreateInfos = queuesCreateInfos.data();
 			createInfo.pEnabledFeatures = &deviceFeatures;
 			createInfo.enabledExtensionCount = 0;
 
@@ -127,6 +150,7 @@ namespace Engine
 			volkLoadDevice(m_LogicalDevice);
 
 			vkGetDeviceQueue(m_LogicalDevice, indices.graphics.value(), 0, &m_GraphicsQueue);
+			vkGetDeviceQueue(m_LogicalDevice, indices.present.value(), 0, &m_PresentQueue);
 		}
 	}
 }
