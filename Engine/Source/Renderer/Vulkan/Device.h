@@ -2,6 +2,7 @@
 
 #include <volk.h>
 
+#include "Core/Window.h"
 #include "Instance.h"
 
 namespace Engine
@@ -10,62 +11,92 @@ namespace Engine
 	{
 		struct QueueFamilyIndices
 		{
-			// holds the graphics queue
 			std::optional<uint32_t> graphics;
-
-			// holds the presentation queue
 			std::optional<uint32_t> present;
 
-			// returns true when all queues were found
-			bool IsComplete() { return graphics.has_value() && present.has_value(); }
+			// returns if all queues were found
+			bool IsComplete()
+			{
+				return graphics.has_value() && present.has_value();
+			}
+		};
+
+		struct SwapchainSupportDetails
+		{
+			VkSurfaceCapabilitiesKHR capabilities{};
+			std::vector<VkSurfaceFormatKHR> formats;
+			std::vector<VkPresentModeKHR> presentModes;
 		};
 
 		class Device
 		{
 		public:
 
+			// returns a pointer to a new device class
+			static SharedPointer<Device> Create(Window& window, Instance& instance);
+
 			// constructor
-			Device() = default;
+			Device(Window& window, Instance& instance);
 
 			// destructor
-			~Device() = default;
-
-			// returns the native vulkan physical device
-			inline VkPhysicalDevice& GetNativePhysicalDevice() { return m_PhysicalDevice; }
-
-			// returns the native vulkan logical device
-			inline VkDevice& GetNativeLogicalDevice() { return m_LogicalDevice; }
+			~Device();
 
 		public:
 
-			// creates the vulkan devices
-			void Create(VkInstance& instance, Validations& validations, VkSurfaceKHR& surface);
+			// returns a reference to the native vulkan physical device
+			inline VkPhysicalDevice& GetNativePhysicalDevice() { return m_PhysicalDevice; }
 
-			// destroys the vulkan devices
-			void Destroy();
+			// returns a reference to the native vulkan device
+			inline VkDevice& GetNativeDevice() { return m_Device; }
 
-		private:
+			// returns a reference to the native vulkan surface
+			inline VkSurfaceKHR& GetNativeSurface() { return m_Surface; }
 
-			// chooses a physical device between all availables
-			void PickPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surface);
+			// returns a reference to the graphics queue
+			inline VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
 
-			// rates a given device based on requirements
-			int RateDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR& surface);
+			// returns a reference to the present queue
+			inline VkQueue& GetPresentQueue() { return m_PresentQueue; }
 
-			// returns the queue families
-			QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR& surface);
-
-		private:
-
-			// creates a logical device
-			void CreateLogicalDevice(VkInstance& instance, Validations& validations, VkSurfaceKHR& surface);
+			// returns a reference for the extensions list
+			inline const std::vector<const char*>& GetExtensions() const { m_Extensions; }
 
 		private:
 
-			VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
-			VkDevice m_LogicalDevice = VK_NULL_HANDLE;
-			VkQueue m_GraphicsQueue = VK_NULL_HANDLE;
-			VkQueue m_PresentQueue = VK_NULL_HANDLE;
+			// creates the vulkan surface
+			void CreateSurface();
+
+			// chooses the physical device from all availables
+			void PickPhysicalDevice();
+
+			// creates a logical device from the choosen physical device
+			void CreateLogicalDevice();
+
+			// scores a physical device in order to properly choose the best available
+			uint32_t RankDevice(VkPhysicalDevice device);
+
+			// populates a queue families by a given device capabilities and properties
+			QueueFamilyIndices QueryFamilyIndices(VkPhysicalDevice device);
+
+			// populates a swapchain details by a given device capabilities and properties
+			SwapchainSupportDetails QuerySupportDetails(VkPhysicalDevice device);
+
+			// checks if a device supports all required extensions
+			bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
+
+		private:
+
+			Window& m_Window;
+			Instance& m_Instance;
+
+			VkSurfaceKHR m_Surface{ VK_NULL_HANDLE };
+			VkPhysicalDevice m_PhysicalDevice{ VK_NULL_HANDLE };
+			VkDevice m_Device{ VK_NULL_HANDLE };
+			VkQueue m_GraphicsQueue{ VK_NULL_HANDLE };
+			VkQueue m_PresentQueue{ VK_NULL_HANDLE };
+
+			const std::vector<const char*> m_Extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
 		};
 	}
 }

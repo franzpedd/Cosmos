@@ -5,9 +5,9 @@
 
 namespace Engine
 {
-	UniquePointer<GraphicsContext> GraphicsContext::CreateGraphicsContext(Window& window, API api)
+	UniquePointer<GraphicsContext> GraphicsContext::CreateGraphicsContext(Window& window, RendererApi api)
 	{
-		ENGINE_ASSERT(api == API::VULKAN, "Vulkan is the only API supported right now");
+		ENGINE_ASSERT(api == RendererApi::VULKAN, "Vulkan is the only API supported right now");
 		return CreateUniquePointer<Vulkan::GraphicsContext>(window);
 	}
 }

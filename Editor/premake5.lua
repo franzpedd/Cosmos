@@ -21,6 +21,9 @@ project "Editor"
     {
         "Source/",
         "%{IncludeList.Engine}",
+        "%{IncludeList.Vulkan}",
+        "%{IncludeList.Volk}",
+        "%{IncludeList.GLFW}",
         "%{IncludeList.GLM}"
     }
 

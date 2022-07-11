@@ -8,10 +8,12 @@
 #include <cstring>
 
 // cpp libraries
+#include <algorithm>
 #include <optional>
 #include <utility>
 #include <memory>
 #include <vector>
+#include <string>
 #include <set>
 #include <map>
 

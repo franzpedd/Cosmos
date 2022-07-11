@@ -2,7 +2,9 @@
 
 #include <cstdint>
 
-struct GLFWwindow;
+#define VK_NO_PROTOTYPES
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 
 namespace Engine
 {
@@ -29,8 +31,14 @@ namespace Engine
 
 	public:
 
+		// creates a vulkan surface for the window
+		VkResult CreateWindowSurface(VkInstance& instance, VkSurfaceKHR& surface);
+
 		// returns a list of extensions needed to create an vulkan instance for glfw
 		const char** GetInstanceExtensions(uint32_t* count);
+
+		// returns the framebuffer size in pixels
+		std::pair<int, int> GetFramebufferSize();
 
 		// returns the current window's width
 		inline uint32_t GetWidth() const { return m_Width; }

@@ -9,7 +9,7 @@ namespace Engine
 	{
 	public:
 
-		enum class API
+		enum class RendererApi
 		{
 			NO_API = 0,
 			VULKAN
@@ -18,7 +18,7 @@ namespace Engine
 	public:
 
 		// returns a pointer to a new context
-		static UniquePointer<GraphicsContext> CreateGraphicsContext(Window& window, API api = API::VULKAN);
+		static UniquePointer<GraphicsContext> CreateGraphicsContext(Window& window, RendererApi api = RendererApi::VULKAN);
 
 		// destructor
 		virtual ~GraphicsContext() = default;

@@ -1,4 +1,4 @@
 #include "enpch.h"
 
-#define VOLK_IMPLEMENTATION // define this only once in the entire solution
+#define VOLK_IMPLEMENTATION
 #include <volk.h>

@@ -1,13 +1,8 @@
 #pragma once
 
-#include <volk.h>
-
 #include "Renderer/GraphicsContext.h"
-
-#include "Device.h"
 #include "Instance.h"
-#include "Surface.h"
-#include "Validations.h"
+#include "Device.h"
 
 namespace Engine
 {
@@ -23,28 +18,11 @@ namespace Engine
 			// destructor
 			virtual ~GraphicsContext();
 
-		public:
-
-			// returns a reference to the instance class
-			inline Instance& GetInstance() { return m_Instance; }
-
-			// returns a reference to the validations class
-			inline Validations& GetValidations() { return m_Validations; }
-
-			// returns a reference to the device class
-			inline Device& GetDevice() { return m_Device; }
-
-			// returns a reference to the surface class
-			inline Surface& GetSurface() { return m_Surface; }
-
 		private:
 
 			Window& m_Window;
-
-			Instance m_Instance{};
-			Validations m_Validations{};
-			Device m_Device{};
-			Surface m_Surface{};
+			SharedPointer<Instance> m_Instance;
+			SharedPointer<Device> m_Device;
 
 		};
 	}

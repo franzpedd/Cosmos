@@ -1,8 +1,6 @@
 #include "enpch.h"
 #include "Window.h"
 
-#include <GLFW/glfw3.h>
-
 namespace Engine
 {
 	uint32_t Window::m_WindowCount = 0;
@@ -23,9 +21,8 @@ namespace Engine
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, nullptr, nullptr);
+		m_Window = glfwCreateWindow(static_cast<int>(m_Width), static_cast<int>(m_Height), m_Title, nullptr, nullptr);
 		ENGINE_ASSERT(m_Window != nullptr, "GLFW window creation has failed");
-
 	}
 
 	Window::~Window()
@@ -48,8 +45,21 @@ namespace Engine
 		return glfwWindowShouldClose(m_Window);
 	}
 
+	VkResult Window::CreateWindowSurface(VkInstance& instance, VkSurfaceKHR& surface)
+	{
+		return glfwCreateWindowSurface(instance, m_Window, nullptr, &surface);
+	}
+
 	const char** Window::GetInstanceExtensions(uint32_t* count)
 	{
 		return glfwGetRequiredInstanceExtensions(count);
+	}
+
+	std::pair<int, int> Window::GetFramebufferSize()
+	{
+		std::pair<int, int> buffer;
+		glfwGetFramebufferSize(m_Window, &buffer.first, &buffer.second);
+
+		return buffer;
 	}
 }
