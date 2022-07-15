@@ -72,6 +72,14 @@ namespace Engine
 			// creates a logical device from the choosen physical device
 			void CreateLogicalDevice();
 
+			// creates a swapchain for the device
+			void CreateSwapchain();
+
+			// creates the swapchain image views
+			void CreateImageViews();
+
+		private:
+
 			// scores a physical device in order to properly choose the best available
 			uint32_t RankDevice(VkPhysicalDevice device);
 
@@ -84,18 +92,34 @@ namespace Engine
 			// checks if a device supports all required extensions
 			bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
 
+			// chooses the best format available from the supported formats 
+			VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats);
+
+			// chooses the best present mode from the supported presentmodes
+			VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& presentModes);
+
+			// chooses the swap extent/resolution the images from swapchain will be shown
+			VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
 		private:
 
 			Window& m_Window;
 			Instance& m_Instance;
 
 			VkSurfaceKHR m_Surface{ VK_NULL_HANDLE };
+
 			VkPhysicalDevice m_PhysicalDevice{ VK_NULL_HANDLE };
 			VkDevice m_Device{ VK_NULL_HANDLE };
 			VkQueue m_GraphicsQueue{ VK_NULL_HANDLE };
 			VkQueue m_PresentQueue{ VK_NULL_HANDLE };
 
 			const std::vector<const char*> m_Extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
+			VkSwapchainKHR m_Swapchain{ VK_NULL_HANDLE };
+			std::vector<VkImage> m_SwapchainImages;
+			VkFormat m_SwapchainImageFormat{};
+			VkExtent2D m_SwapchainExtent2D{};
+			std::vector<VkImageView> m_SwapchainImageViews;
 
 		};
 	}
