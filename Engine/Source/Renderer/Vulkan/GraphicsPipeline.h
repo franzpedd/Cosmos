@@ -2,6 +2,7 @@
 
 #include <volk.h>
 
+#include "Device.h"
 #include "Shader.h"
 #include "Util/Memory.h"
 
@@ -14,10 +15,10 @@ namespace Engine
 		public:
 
 			// returns a pointer to a new instance class
-			static SharedPointer<GraphicsPipeline> Create();
+			static SharedPointer<GraphicsPipeline> Create(Device& device);
 
 			// constructor
-			GraphicsPipeline();
+			GraphicsPipeline(Device& device);
 
 			// destructor
 			~GraphicsPipeline();
@@ -34,6 +35,7 @@ namespace Engine
 
 		private:
 
+			Device& m_Device;
 			SharedPointer<Shader> m_Vertex;
 			SharedPointer<Shader> m_Fragment;
 

@@ -5,12 +5,12 @@ namespace Engine
 {
 	namespace Vulkan
 	{
-		SharedPointer<Shader> Shader::Create(Shader::Specification& specs)
+		SharedPointer<Shader> Shader::Create(Device& device, Shader::Specification& specs)
 		{
-			return CreateSharedPointer<Shader>(specs);
+			return CreateSharedPointer<Shader>(device, specs);
 		}
 
-		Shader::Shader(Shader::Specification& specs) : m_Specification(specs)
+		Shader::Shader(Device& device, Shader::Specification& specs) : m_Specification(specs), m_Device(device)
 		{
 			ENGINE_TRACE("Creating Vulkan Shader");
 
@@ -19,24 +19,60 @@ namespace Engine
 
 		Shader::~Shader()
 		{
+			vkDestroyShaderModule(m_Device.GetNativeDevice(), m_ShaderModule, nullptr);
+		}
 
+		VkShaderModule Shader::CreateShaderModule(VkDevice device)
+		{
+			std::vector<char> code = ReadBinary();
+
+			VkShaderModuleCreateInfo ci{};
+			ci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			ci.pNext = nullptr;
+			ci.flags = 0;
+			ci.codeSize = code.size();
+			ci.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+			VkResult res = vkCreateShaderModule(device, &ci, nullptr, &m_ShaderModule);
+			ENGINE_ASSERT(res == VK_SUCCESS, "Failed to create shader module");
+
+			return m_ShaderModule;
 		}
 
 		std::string Shader::ReadSource()
 		{
 			std::ifstream file(m_Specification.path);
 
+			if (!file.is_open())
+			{
+				ENGINE_ASSERT(false, "Failed to open %s", m_Specification.path);
+			}
+
 			std::ostringstream buffer{};
 			file >> buffer.rdbuf();
-
-			if (file.fail() && !file.eof())
-			{
-				ENGINE_ASSERT(false, "Failed to open/read %s", m_Specification.path.c_str());
-			}
 
 			file.close();
 
 			return buffer.str();
+		}
+
+		std::vector<char> Shader::ReadBinary()
+		{
+			std::ifstream file(m_Specification.path + ".spv", std::ios::ate | std::ios::binary);
+
+			if (!file.is_open())
+			{
+				ENGINE_ASSERT(false, "Failed to open %s", m_Specification.path);
+			}
+
+			size_t fileSize = (size_t)file.tellg();
+			std::vector<char> buffer(fileSize);
+
+			file.seekg(0);
+			file.read(buffer.data(), fileSize);
+			file.close();
+
+			return buffer;
 		}
 
 		void Shader::WriteBinary()
@@ -68,11 +104,6 @@ namespace Engine
 			ENGINE_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success, "%s", result.GetErrorMessage().c_str());
 
 			return { result.cbegin(), result.cend() };
-		}
-
-		VkShaderModule Shader::CreateShaderModule()
-		{
-			return VkShaderModule();
 		}
 	}
 }

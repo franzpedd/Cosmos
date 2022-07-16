@@ -3,6 +3,7 @@
 #include <volk.h>
 
 #include "Core/Window.h"
+
 #include "Instance.h"
 
 namespace Engine
@@ -33,10 +34,10 @@ namespace Engine
 		public:
 
 			// returns a pointer to a new device class
-			static SharedPointer<Device> Create(Window& window, Instance& instance);
+			static SharedPointer<Device> Create(Window& window, Vulkan::Instance& instance);
 
 			// constructor
-			Device(Window& window, Instance& instance);
+			Device(Window& window, Vulkan::Instance& instance);
 
 			// destructor
 			~Device();

@@ -5,12 +5,13 @@ namespace Engine
 {
 	namespace Vulkan
 	{
-		SharedPointer<GraphicsPipeline> GraphicsPipeline::Create()
+		SharedPointer<GraphicsPipeline> GraphicsPipeline::Create(Device& device)
 		{
-			return CreateSharedPointer<GraphicsPipeline>();
+			return CreateSharedPointer<GraphicsPipeline>(device);
 		}
 
-		GraphicsPipeline::GraphicsPipeline()
+		GraphicsPipeline::GraphicsPipeline(Device& device)
+			: m_Device(device)
 		{
 			ENGINE_TRACE("Creating Vulkan Graphics Pipeline");
 
@@ -30,7 +31,8 @@ namespace Engine
 			specs.path = "Shader/simple_shader.vert";
 			specs.type = Shader::Type::Vertex;
 
-			m_Vertex = Shader::Create(specs);
+			m_Vertex = Shader::Create(m_Device, specs);
+			m_Vertex->CreateShaderModule(m_Device.GetNativeDevice());
 		}
 
 		void GraphicsPipeline::CreateFragmentShader()
@@ -40,7 +42,8 @@ namespace Engine
 			specs.path = "Shader/simple_shader.frag";
 			specs.type = Shader::Type::Fragment;
 
-			m_Fragment = Shader::Create(specs);
+			m_Fragment = Shader::Create(m_Device, specs);
+			m_Fragment->CreateShaderModule(m_Device.GetNativeDevice());
 		}
 	}
 }

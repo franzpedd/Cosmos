@@ -11,7 +11,7 @@ namespace Engine
 
 			m_Instance = Instance::Create(m_Window);
 			m_Device = Device::Create(m_Window, *m_Instance);
-			m_GraphicsPipeline = GraphicsPipeline::Create();
+			m_GraphicsPipeline = GraphicsPipeline::Create(*m_Device);
 		}
 
 		GraphicsContext::~GraphicsContext()

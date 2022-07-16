@@ -48,5 +48,6 @@ project "Engine"
     filter "system:windows"
         disablewarnings
         {
-            "26812"
+            "26812",
+            "26439"
         }

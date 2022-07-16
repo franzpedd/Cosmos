@@ -5,12 +5,12 @@ namespace Engine
 {
 	namespace Vulkan
 	{
-		SharedPointer<Device> Device::Create(Window& window, Instance& instance)
+		SharedPointer<Device> Device::Create(Window& window, Vulkan::Instance& instance)
 		{
 			return CreateSharedPointer<Device>(window, instance);
 		}
 
-		Device::Device(Window& window, Instance& instance) : m_Window(window), m_Instance(instance)
+		Device::Device(Window& window, Vulkan::Instance& instance) : m_Window(window), m_Instance(instance)
 		{
 			ENGINE_TRACE("Creating Vulkan Device");
 
