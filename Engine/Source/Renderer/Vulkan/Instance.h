@@ -14,7 +14,7 @@ namespace Engine
 		public:
 
 			// returns a pointer to a new instance class
-			static UniquePointer<Instance> Create(Window& window);
+			static SharedPointer<Instance> Create(Window& window);
 
 			// constructor
 			Instance(Window& window);

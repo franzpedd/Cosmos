@@ -23,7 +23,7 @@ namespace Engine
 	private:
 
 		Window& m_Window;
-		UniquePointer<GraphicsContext> m_GraphicsContext;
+		SharedPointer<GraphicsContext> m_GraphicsContext;
 
 	};
 }

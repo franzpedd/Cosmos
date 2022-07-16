@@ -12,3 +12,4 @@ Thirdparty/vulkan
 **.vcxproj
 **.vcxproj.user
 **.vcxproj.filters
+**.spv

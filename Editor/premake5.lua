@@ -14,7 +14,9 @@ project "Editor"
     files
     {
         "Source/**.h",
-        "Source/**.cpp"
+        "Source/**.cpp",
+        "Shader/**.frag",
+        "Shader/**.vert"
     }
 
     includedirs
@@ -24,7 +26,8 @@ project "Editor"
         "%{IncludeList.Vulkan}",
         "%{IncludeList.Volk}",
         "%{IncludeList.GLFW}",
-        "%{IncludeList.GLM}"
+        "%{IncludeList.GLM}",
+        "%{LibraryList.Shaderc}"
     }
 
     links

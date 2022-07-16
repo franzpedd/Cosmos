@@ -35,9 +35,9 @@ namespace Engine
 {
 	namespace Vulkan
 	{
-		UniquePointer<Instance> Instance::Create(Window& window)
+		SharedPointer<Instance> Instance::Create(Window& window)
 		{
-			return CreateUniquePointer<Instance>(window);
+			return CreateSharedPointer<Instance>(window);
 		}
 
 		Instance::Instance(Window& window) : m_Window(window)

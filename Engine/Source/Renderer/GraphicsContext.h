@@ -5,20 +5,18 @@
 
 namespace Engine
 {
+	enum class RendererApi
+	{
+		NO_API = 0,
+		VULKAN
+	};
+
 	class GraphicsContext
 	{
 	public:
 
-		enum class RendererApi
-		{
-			NO_API = 0,
-			VULKAN
-		};
-
-	public:
-
-		// returns a pointer to a new context
-		static UniquePointer<GraphicsContext> CreateGraphicsContext(Window& window, RendererApi api = RendererApi::VULKAN);
+		// returns a shared to a new context
+		static SharedPointer<GraphicsContext> CreateGraphicsContext(Window& window, RendererApi api = RendererApi::VULKAN);
 
 		// destructor
 		virtual ~GraphicsContext() = default;

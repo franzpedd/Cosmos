@@ -16,6 +16,10 @@ workspace "Cosmos"
     IncludeList["Volk"] = "%{wks.location}/Thirdparty/Volk"
     IncludeList["GLFW"] = "%{wks.location}/Thirdparty/glfw/include"
     IncludeList["GLM"] = "%{wks.location}/Thirdparty/glm"
+
+    LibraryList = {}
+
+    LibraryList["Shaderc"] = "%{VulkanSDK}/Lib/shaderc_shared.lib"
     
 group "Projects"
     include "Editor"

@@ -11,6 +11,9 @@
 #include <algorithm>
 #include <optional>
 #include <utility>
+#include <fstream>
+#include <sstream>
+#include <ostream>
 #include <memory>
 #include <vector>
 #include <string>

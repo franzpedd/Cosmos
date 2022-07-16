@@ -31,7 +31,8 @@ project "Engine"
 
     links
     {
-        "GLFW"
+        "GLFW",
+        "%{LibraryList.Shaderc}"
     }
 
     filter "configurations:Debug"

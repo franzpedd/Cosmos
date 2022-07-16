@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Renderer/GraphicsContext.h"
-#include "Instance.h"
 #include "Device.h"
+#include "GraphicsPipeline.h"
+#include "Instance.h"
 
 namespace Engine
 {
@@ -23,6 +24,7 @@ namespace Engine
 			Window& m_Window;
 			SharedPointer<Instance> m_Instance;
 			SharedPointer<Device> m_Device;
+			SharedPointer<GraphicsPipeline> m_GraphicsPipeline;
 
 		};
 	}
