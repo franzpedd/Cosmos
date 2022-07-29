@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "Window.h"
+#include "Utils/Memory.h"
 
 namespace Engine
 {
@@ -11,8 +12,11 @@ namespace Engine
 	{
 	public:
 
+		// returns a shared pointer to a new input
+		static SharedPointer<Input> Create(SharedPointer<Window>& window);
+
 		// constructor
-		Input(Window& windowref);
+		Input(SharedPointer<Window>& window);
 
 		// destructor
 		~Input();
@@ -35,6 +39,6 @@ namespace Engine
 
 	private:
 
-		Window& m_WindowRef;
+		SharedPointer<Window>& m_Window;
 	};
 }

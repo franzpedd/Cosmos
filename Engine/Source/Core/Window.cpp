@@ -1,9 +1,16 @@
 #include "enpch.h"
 #include "Window.h"
 
+#include <GLFW/glfw3.h>
+
 namespace Engine
 {
 	uint32_t Window::m_WindowCount = 0;
+
+	SharedPointer<Window> Window::Create(const char* title, uint32_t width, uint32_t height)
+	{
+		return CreateSharedPointer<Window>(title, width, height);
+	}
 
 	Window::Window(const char* title, uint32_t width, uint32_t height)
 		: m_Window(nullptr), m_Title(title), m_Width(width), m_Height(height)
@@ -43,11 +50,6 @@ namespace Engine
 	bool Window::ShouldClose()
 	{
 		return glfwWindowShouldClose(m_Window);
-	}
-
-	VkResult Window::CreateWindowSurface(VkInstance& instance, VkSurfaceKHR& surface)
-	{
-		return glfwCreateWindowSurface(instance, m_Window, nullptr, &surface);
 	}
 
 	const char** Window::GetInstanceExtensions(uint32_t* count)

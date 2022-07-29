@@ -2,7 +2,8 @@
 
 #include "Input.h"
 #include "Window.h"
-#include "Renderer.h"
+
+#include "Renderer/Context.h"
 
 namespace Engine
 {
@@ -18,14 +19,14 @@ namespace Engine
 
 	public:
 
-		// returns a reference to the application's input
-		inline const Input& GetInput() const { return m_Input; }
+		// returns the application's input
+		inline const SharedPointer<Input>& GetInput() const { return m_Input; }
 
-		// returns a reference to the application's window
-		inline const Window& GetWindow() const { return m_Window; }
+		// returns the application's window
+		inline const SharedPointer<Window>& GetWindow() const { return m_Window; }
 
-		//returns a reference to the application's renderer
-		inline const Renderer& GetRenderer() const { return m_Renderer; }
+		// returns the renderer context
+		inline const SharedPointer<Renderer::Context>& GetRenderer() { return m_RendererContext; }
 
 	public:
 
@@ -34,9 +35,9 @@ namespace Engine
 
 	private:
 
-		Input m_Input;
-		Window m_Window;
-		Renderer m_Renderer;
+		SharedPointer<Input> m_Input;
+		SharedPointer<Window> m_Window;
+		SharedPointer<Renderer::Context> m_RendererContext;
 
 	};
 }

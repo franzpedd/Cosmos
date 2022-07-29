@@ -11,7 +11,7 @@ project "Engine"
 
     defines
     {
-        
+        "RENDERER_VULKAN"
     }
 
     files

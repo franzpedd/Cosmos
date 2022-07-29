@@ -1,68 +1,60 @@
 #pragma once
 
-#include <volk.h>
-
 #include "Core/Window.h"
-#include "Util/Memory.h"
 
-namespace Engine
+#include <volk.h>
+#include <vector>
+
+namespace Engine::Renderer
 {
-	namespace Vulkan
+	class Instance
 	{
-		class Instance
-		{
-		public:
+	public:
 
-			// returns a pointer to a new instance class
-			static SharedPointer<Instance> Create(Window& window);
+		// returns a smart pointer to a new instance
+		static SharedPointer<Instance> Create(SharedPointer<Window>& window);
 
-			// constructor
-			Instance(Window& window);
+		// constructor
+		Instance(SharedPointer<Window>& window);
 
-			// destructor
-			~Instance();
+		// destructor
+		~Instance();
 
-		public:
+		// returns the native vulkan instance
+		inline VkInstance& GetNativeVulkanInstance() { return m_Instance; }
 
-			// returns a reference for the validations list
-			inline const std::vector<const char*>& GetValidations() const { return m_Validations; }
+	public:
 
-			// returns a reference to the native vulkan instance
-			inline VkInstance& GetNativeInstance() { return m_Instance; }
+		// returns the validations list
+		inline const std::vector<const char*>& GetValidations() const { return m_Validations; }
 
-		private:
+		// returns if validations are enabled or not
+		inline const bool AreValidationsEnabled() { return m_ValidationsEnabled; }
 
-			// creates the instance
-			void CreateInstance(Window& window);
+		// returns if required validations are supported
+		bool CheckValidationSupport();
 
-			// creates the validations
-			void CreateValidations();
+	private:
 
-		public:
+		// creates the instance
+		void CreateInstance();
 
-			// returns if validations are currently enabled
-			inline const bool AreValidationsEnabled() const { return m_EnableValidations; }
+		// creates the validation layer
+		void CreateValidations();
 
-			// returns if required validations are supported
-			bool CheckValidationsSupport();
+		// returns a list of required extensions
+		std::vector<const char*> GetRequiredExtensions(SharedPointer<Window>& window);
 
-		private:
+	private:
 
-			// returns a list of required extensions
-			std::vector<const char*> GetRequiredExtensions(Window& window);
-
-		private:
-
-			Window& m_Window;
-			VkInstance m_Instance;
-			VkDebugUtilsMessengerEXT m_DebugMessenger{ VK_NULL_HANDLE };
-			const std::vector<const char*> m_Validations{ "VK_LAYER_KHRONOS_validation" };
+		SharedPointer<Window>& m_Window;
+		VkInstance m_Instance = VK_NULL_HANDLE;
+		VkDebugUtilsMessengerEXT m_DebugMessenger = VK_NULL_HANDLE;
+		const std::vector<const char*> m_Validations = { "VK_LAYER_KHRONOS_validation" };
 #if defined ENGINE_DEBUG
-			const bool m_EnableValidations = true;
+		const bool m_ValidationsEnabled = true;
 #else
-			const bool m_EnableValidations = false;
+		const bool m_ValidationsEnabled = false;
 #endif
-		};
-
-	}
+	};
 }

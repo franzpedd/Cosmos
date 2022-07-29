@@ -5,8 +5,13 @@
 
 namespace Engine
 {
-	Input::Input(Window& windowref)
-		: m_WindowRef(windowref)
+	SharedPointer<Input> Input::Create(SharedPointer<Window>& window)
+	{
+		return CreateSharedPointer<Input>(window);
+	}
+
+	Input::Input(SharedPointer<Window>& window)
+		: m_Window(window)
 	{
 		ENGINE_TRACE("Creating Input");
 	}
@@ -23,18 +28,18 @@ namespace Engine
 
 	uint32_t Input::IsKeyboardKeyDown(uint32_t keycode)
 	{
-		return (uint32_t)glfwGetKey(m_WindowRef.GetNativeWindow(), keycode);
+		return (uint32_t)glfwGetKey(m_Window->GetNativeWindow(), keycode);
 	}
 
 	uint32_t Input::IsMouseButtonDown(uint32_t buttoncode)
 	{
-		return (uint32_t)glfwGetMouseButton(m_WindowRef.GetNativeWindow(), buttoncode);
+		return (uint32_t)glfwGetMouseButton(m_Window->GetNativeWindow(), buttoncode);
 	}
 
 	std::pair<double, double> Input::GetCurrentMousePosition()
 	{
 		std::pair<double, double> pos;
-		glfwGetCursorPos(m_WindowRef.GetNativeWindow(), &pos.first, &pos.second);
+		glfwGetCursorPos(m_Window->GetNativeWindow(), &pos.first, &pos.second);
 
 		return pos;
 	}
