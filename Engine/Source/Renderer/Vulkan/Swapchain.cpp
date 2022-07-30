@@ -76,7 +76,7 @@ namespace Engine::Renderer
 		ci.clipped = VK_TRUE;
 		ci.oldSwapchain = VK_NULL_HANDLE;
 
-		VK_CHECK(vkCreateSwapchainKHR(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_Swapchain));
+		ENGINE_ASSERT(vkCreateSwapchainKHR(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_Swapchain) == VK_SUCCESS, "Failed to create vulkan swapchain");
 
 		vkGetSwapchainImagesKHR(m_Device->GetNativeVulkanDevice(), m_Swapchain, &imageCount, nullptr);
 		m_SwapchainImages.resize(imageCount);
@@ -109,7 +109,7 @@ namespace Engine::Renderer
 			ci.subresourceRange.baseArrayLayer = 0;
 			ci.subresourceRange.layerCount = 1;
 
-			VK_CHECK(vkCreateImageView(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_SwapchainImageViews[i]));
+			ENGINE_ASSERT(vkCreateImageView(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_SwapchainImageViews[i]) == VK_SUCCESS, "Failed to create vulkan image views");
 		}
 	}
 

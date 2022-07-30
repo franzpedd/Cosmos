@@ -33,7 +33,7 @@ namespace Engine::Renderer
 		ci.codeSize = code.size();
 		ci.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
-		VK_CHECK(vkCreateShaderModule(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_ShaderModule));
+		ENGINE_ASSERT(vkCreateShaderModule(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_ShaderModule) == VK_SUCCESS, "Failed to create vulkan shader module");
 	}
 
 	std::vector<uint32_t> Shader::Compile()

@@ -236,7 +236,7 @@ namespace Engine::Renderer
 		pipelineLayoutci.pushConstantRangeCount = 0;
 		pipelineLayoutci.pPushConstantRanges = nullptr;
 
-		VK_CHECK(vkCreatePipelineLayout(m_Device->GetNativeVulkanDevice(), &pipelineLayoutci, nullptr, &m_PipelineLayout));
+		ENGINE_ASSERT(vkCreatePipelineLayout(m_Device->GetNativeVulkanDevice(), &pipelineLayoutci, nullptr, &m_PipelineLayout) == VK_SUCCESS, "Failed to create vulkan pipeline layout");
 
 		VkGraphicsPipelineCreateInfo gpipelineci{};
 		gpipelineci.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -259,7 +259,7 @@ namespace Engine::Renderer
 		gpipelineci.basePipelineHandle = VK_NULL_HANDLE;
 		gpipelineci.basePipelineIndex = -1;
 
-		VK_CHECK(vkCreateGraphicsPipelines(m_Device->GetNativeVulkanDevice(), VK_NULL_HANDLE, 1, &gpipelineci, nullptr, &m_Pipeline));
+		ENGINE_ASSERT(vkCreateGraphicsPipelines(m_Device->GetNativeVulkanDevice(), VK_NULL_HANDLE, 1, &gpipelineci, nullptr, &m_Pipeline) == VK_SUCCESS, "Failed to create vulkan graphics pipeline");
 	}
 
 	void GraphicsPipeline::CreateFramebuffers()
@@ -281,7 +281,7 @@ namespace Engine::Renderer
 			ci.height = m_Swapchain->GetSwapchainExtent2D().height;
 			ci.layers = 1;
 
-			VK_CHECK(vkCreateFramebuffer(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_SwapchainFramebuffers[i]));
+			ENGINE_ASSERT(vkCreateFramebuffer(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_SwapchainFramebuffers[i]) == VK_SUCCESS, "Failed to create vulkan framebuffers");
 		}
 	}
 
@@ -295,7 +295,7 @@ namespace Engine::Renderer
 		ci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		ci.queueFamilyIndex = queueFamilyIndices.graphics.value();
 
-		VK_CHECK(vkCreateCommandPool(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_CommandPool));
+		ENGINE_ASSERT(vkCreateCommandPool(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_CommandPool) == VK_SUCCESS, "Failed to create vulkan command pool");
 	}
 
 	void GraphicsPipeline::CreateCommandBuffer()
@@ -309,7 +309,7 @@ namespace Engine::Renderer
 		alloc.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		alloc.commandBufferCount = static_cast<uint32_t>(m_CommandBuffers.size());
 
-		VK_CHECK(vkAllocateCommandBuffers(m_Device->GetNativeVulkanDevice(), &alloc, m_CommandBuffers.data()));
+		ENGINE_ASSERT(vkAllocateCommandBuffers(m_Device->GetNativeVulkanDevice(), &alloc, m_CommandBuffers.data()) == VK_SUCCESS, "Failed to allocate vulkan command buffers");
 	}
 
 	void GraphicsPipeline::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
@@ -320,7 +320,7 @@ namespace Engine::Renderer
 		commandBegin.flags = 0;
 		commandBegin.pInheritanceInfo = nullptr;
 
-		VK_CHECK(vkBeginCommandBuffer(commandBuffer, &commandBegin));
+		ENGINE_ASSERT(vkBeginCommandBuffer(commandBuffer, &commandBegin) == VK_SUCCESS, "Failed to begin vulkan command buffers");
 
 		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
 
@@ -357,7 +357,7 @@ namespace Engine::Renderer
 
 		vkCmdEndRenderPass(commandBuffer);
 
-		VK_CHECK(vkEndCommandBuffer(commandBuffer));
+		ENGINE_ASSERT(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS, "Failed while ending vulkan command buffer");
 	}
 
 	void GraphicsPipeline::CleanFramebuffers()

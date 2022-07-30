@@ -16,7 +16,7 @@ namespace Engine::Renderer
 	{
 		ENGINE_TRACE("Creating Surface");
 
-		VK_CHECK(glfwCreateWindowSurface(m_Instance->GetNativeVulkanInstance(), m_Window->GetNativeWindow(), nullptr, &m_Surface));
+		ENGINE_ASSERT(glfwCreateWindowSurface(m_Instance->GetNativeVulkanInstance(), m_Window->GetNativeWindow(), nullptr, &m_Surface) == VK_SUCCESS, "Failed to create vulkan surface")
 	}
 
 	Surface::~Surface()

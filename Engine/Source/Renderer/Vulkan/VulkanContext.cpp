@@ -33,22 +33,10 @@ namespace Engine::Renderer
 
 	void VulkanContext::DrawFrame()
 	{
-		vkWaitForFences(
-			m_Device->GetNativeVulkanDevice(),
-			1,
-			&m_SyncronizationSystem->GetFrameFences()[m_CurrentFrame],
-			VK_TRUE,
-			UINT64_MAX);
+		vkWaitForFences(m_Device->GetNativeVulkanDevice(), 1, &m_SyncronizationSystem->GetFrameFences()[m_CurrentFrame], VK_TRUE, UINT64_MAX);
 
 		uint32_t imageIndex;
-
-		VkResult result = vkAcquireNextImageKHR(
-			m_Device->GetNativeVulkanDevice(),
-			m_Swapchain->GetNativeVulkanSwapchain(),
-			UINT64_MAX,
-			m_SyncronizationSystem->GetAvailableSemaphores()[m_CurrentFrame],
-			VK_NULL_HANDLE,
-			&imageIndex);
+		VkResult result = vkAcquireNextImageKHR(m_Device->GetNativeVulkanDevice(), m_Swapchain->GetNativeVulkanSwapchain(), UINT64_MAX, m_SyncronizationSystem->GetAvailableSemaphores()[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
 		{
@@ -69,7 +57,6 @@ namespace Engine::Renderer
 		VkSemaphore waitSemaphores[] = { m_SyncronizationSystem->GetAvailableSemaphores()[m_CurrentFrame] };
 		VkSemaphore signalSemaphores[] = { m_SyncronizationSystem->GetRenderedSemaphores()[m_CurrentFrame] };
 		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.pNext = nullptr;
@@ -81,10 +68,9 @@ namespace Engine::Renderer
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = signalSemaphores;
 
-		VK_CHECK(vkQueueSubmit(m_Device->GetGraphicsQueue(), 1, &submitInfo, m_SyncronizationSystem->GetFrameFences()[m_CurrentFrame]));
+		ENGINE_ASSERT(vkQueueSubmit(m_Device->GetGraphicsQueue(), 1, &submitInfo, m_SyncronizationSystem->GetFrameFences()[m_CurrentFrame]) == VK_SUCCESS, "Failed to submit to graphics queue");
 
 		VkSwapchainKHR swapchains[] = { m_Swapchain->GetNativeVulkanSwapchain() };
-
 		VkPresentInfoKHR presentInfo{};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		presentInfo.pNext = nullptr;

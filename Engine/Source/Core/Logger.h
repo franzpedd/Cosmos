@@ -52,19 +52,3 @@ namespace Engine
 #define ENGINE_TRACE(...)
 #define EDITOR_TRACE(...)
 #endif
-
-#if defined(RENDERER_VULKAN)
-
-#include <volk.h>
-
-#define VK_CHECK(x)												\
-	do															\
-	{															\
-		VkResult err = x;										\
-		if (err)												\
-		{														\
-			std::cout <<"Vulkan error: " << err << std::endl;	\
-			abort();											\
-		}														\
-	} while (0)
-#endif

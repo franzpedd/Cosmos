@@ -81,7 +81,7 @@ namespace Engine::Renderer
 
 	void Instance::CreateInstance()
 	{
-		VK_CHECK(volkInitialize());
+		ENGINE_ASSERT(volkInitialize() == VK_SUCCESS, "Failed to initialize volk");
 
 		auto extensions = GetRequiredExtensions(m_Window);
 
@@ -131,7 +131,7 @@ namespace Engine::Renderer
 			instci.pNext = nullptr;
 		}
 
-		VK_CHECK(vkCreateInstance(&instci, nullptr, &m_Instance));
+		ENGINE_ASSERT(vkCreateInstance(&instci, nullptr, &m_Instance) == VK_SUCCESS, "Failed to create vulkan instance");
 		volkLoadInstance(m_Instance);
 	}
 
@@ -157,7 +157,7 @@ namespace Engine::Renderer
 		ci.pfnUserCallback = DebugCallback;
 		ci.pUserData = nullptr;
 
-		VK_CHECK(vkCreateDebugUtilsMessengerEXT(m_Instance, &ci, nullptr, &m_DebugMessenger));
+		ENGINE_ASSERT(vkCreateDebugUtilsMessengerEXT(m_Instance, &ci, nullptr, &m_DebugMessenger) == VK_SUCCESS, "Failed to create debug utils");
 	}
 
 	std::vector<const char*> Instance::GetRequiredExtensions(SharedPointer<Window>& window)

@@ -172,7 +172,7 @@ namespace Engine::Renderer
 			ci.ppEnabledLayerNames = nullptr;
 		}
 
-		VK_CHECK(vkCreateDevice(m_PhysicalDevice, &ci, nullptr, &m_Device));
+		ENGINE_ASSERT(vkCreateDevice(m_PhysicalDevice, &ci, nullptr, &m_Device) == VK_SUCCESS, "Failed to create vulkan device");
 		volkLoadDevice(m_Device);
 
 		vkGetDeviceQueue(m_Device, indices.graphics.value(), 0, &m_GraphicsQueue);

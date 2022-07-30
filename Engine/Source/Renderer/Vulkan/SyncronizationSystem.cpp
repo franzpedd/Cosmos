@@ -29,9 +29,9 @@ namespace Engine::Renderer
 
 		for (int i = 0; i < m_Device->GetMaxFramesInFlight(); i++)
 		{
-			VK_CHECK(vkCreateSemaphore(m_Device->GetNativeVulkanDevice(), &semaphoreci, nullptr, &m_ImageAvailableSemaphores[i]));
-			VK_CHECK(vkCreateSemaphore(m_Device->GetNativeVulkanDevice(), &semaphoreci, nullptr, &m_FinishedRendererSempahores[i]));
-			VK_CHECK(vkCreateFence(m_Device->GetNativeVulkanDevice(), &fenceci, nullptr, &m_InFlightFences[i]));
+			ENGINE_ASSERT(vkCreateSemaphore(m_Device->GetNativeVulkanDevice(), &semaphoreci, nullptr, &m_ImageAvailableSemaphores[i]) == VK_SUCCESS, "Failed to create vulkan image available semaphore");
+			ENGINE_ASSERT(vkCreateSemaphore(m_Device->GetNativeVulkanDevice(), &semaphoreci, nullptr, &m_FinishedRendererSempahores[i]) == VK_SUCCESS, "Failed to create vulkan image finished rendered semaphore");
+			ENGINE_ASSERT(vkCreateFence(m_Device->GetNativeVulkanDevice(), &fenceci, nullptr, &m_InFlightFences[i]) == VK_SUCCESS, "Failed to create vulkan frames in flight fence");
 		}
 	}
 
