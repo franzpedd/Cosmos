@@ -28,9 +28,9 @@ namespace Engine::Renderer
 		inline VkCommandPool& GetCommandPool() { return m_CommandPool; }
 
 		// returns the native vulkan command buffer
-		inline VkCommandBuffer& GetCommandBuffer() { return m_CommandBuffer; }
+		inline std::vector<VkCommandBuffer>& GetCommandBuffer() { return m_CommandBuffers; }
 
-	private:
+	public:
 
 		// creates the render pass
 		void CreateRenderPass();
@@ -39,7 +39,7 @@ namespace Engine::Renderer
 		void CreateGraphicsPipeline();
 
 		// creates the framebuffers
-		void CreateFrameBuffers();
+		void CreateFramebuffers();
 
 		// creates the commandpool
 		void CreateCommandPool();
@@ -51,6 +51,9 @@ namespace Engine::Renderer
 
 		// records the commandbuffer
 		void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
+		// cleans current framebuffers
+		void CleanFramebuffers();
 
 	private:
 
@@ -69,9 +72,9 @@ namespace Engine::Renderer
 		VkRenderPass m_RenderPass;
 		VkPipeline m_Pipeline;
 
-		std::vector<VkFramebuffer> m_SwapchainFrameuffers;
+		std::vector<VkFramebuffer> m_SwapchainFramebuffers;
 
 		VkCommandPool m_CommandPool;
-		VkCommandBuffer m_CommandBuffer;
+		std::vector<VkCommandBuffer> m_CommandBuffers;
 	};
 }

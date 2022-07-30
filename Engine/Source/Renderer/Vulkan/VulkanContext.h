@@ -33,11 +33,11 @@ namespace Engine::Renderer
 
 	private:
 
-		// pre-syncronize semaphores and fences
-		void PreSync();
-
 		// retrieves the next image in the swapchain
-		void PreDraw();
+		void DrawFrame();
+
+		// requests the swapchain recreation from the swapchain and the graphics pipeline
+		void RequestSwapchainRecreation();
 
 	private:
 
@@ -49,5 +49,6 @@ namespace Engine::Renderer
 		SharedPointer<GraphicsPipeline> m_GraphicsPipeline;
 		SharedPointer<SyncronizationSystem> m_SyncronizationSystem;
 
+		uint32_t m_CurrentFrame = 0;
 	};
 }

@@ -43,6 +43,9 @@ namespace Engine::Renderer
 		// creates the swapchain image views
 		void CreateImageViews();
 
+		// cleans the current swapchain
+		void Cleanup();
+
 	private:
 
 		// chooses the best format available from the supported formats 

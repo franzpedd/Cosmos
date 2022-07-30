@@ -32,6 +32,9 @@ namespace Engine
 		// returns if the window should close
 		bool ShouldClose();
 
+		// waits for glfw events
+		void WaitEvents();
+
 	public:
 
 		// returns a list of extensions needed to create an vulkan instance for glfw
@@ -46,6 +49,12 @@ namespace Engine
 		// returns the current window's height
 		inline uint32_t GetHeight() const { return m_Height; }
 
+		// returns either if the window was resized or not
+		inline bool WasResized() { return m_Resized; }
+
+		// signals that the window got resized
+		inline void SetResized(bool val) { m_Resized = val; }
+
 	private:
 
 		static uint32_t m_WindowCount;
@@ -53,6 +62,7 @@ namespace Engine
 		const char* m_Title;
 		uint32_t m_Width;
 		uint32_t m_Height;
+		bool m_Resized = false;
 
 	};
 }

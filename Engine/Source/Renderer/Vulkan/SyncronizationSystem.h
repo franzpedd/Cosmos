@@ -23,24 +23,20 @@ namespace Engine::Renderer
 	public:
 
 		// returns the image available semaphore
-		inline VkSemaphore& GetAvailableSemaphore() { return m_ImageAvailable; };
+		inline std::vector<VkSemaphore>& GetAvailableSemaphores() { return m_ImageAvailableSemaphores; };
 
 		// returns the image finished rendering sempahore
-		inline VkSemaphore& GetRenderedSemaphore() { return m_RenderFinished; }
+		inline std::vector<VkSemaphore>& GetRenderedSemaphores() { return m_FinishedRendererSempahores; }
 
 		// returns the frame in flight fence
-		inline VkFence& GetFrameFence() { return m_FrameInFlight; }
-
-	public:
-
-		// waits until the last frame is rendered
-		void WaitForPreviousRender();
+		inline std::vector<VkFence>& GetFrameFences() { return m_InFlightFences; }
 
 	private:
 
 		SharedPointer<Device>& m_Device;
-		VkSemaphore m_ImageAvailable = VK_NULL_HANDLE;	// signals that the image is available
-		VkSemaphore m_RenderFinished = VK_NULL_HANDLE;	// signals that the image has finished it's rendering
-		VkFence m_FrameInFlight = VK_NULL_HANDLE;		// makes sure only one frame is rendered at a time
+		std::vector<VkSemaphore> m_ImageAvailableSemaphores;	// signals that the image is available
+		std::vector<VkSemaphore> m_FinishedRendererSempahores;	// signals that the image has finished it's rendering
+		std::vector<VkFence> m_InFlightFences;					// makes sure only one frame is rendered at a time
+
 	};
 }

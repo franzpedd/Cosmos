@@ -113,6 +113,16 @@ namespace Engine::Renderer
 		}
 	}
 
+	void Swapchain::Cleanup()
+	{
+		for (auto imageView : m_SwapchainImageViews)
+		{
+			vkDestroyImageView(m_Device->GetNativeVulkanDevice(), imageView, nullptr);
+		}
+
+		vkDestroySwapchainKHR(m_Device->GetNativeVulkanDevice(), m_Swapchain, nullptr);
+	}
+
 	VkSurfaceFormatKHR Swapchain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats)
 	{
 		for (const auto& availableFormat : formats)

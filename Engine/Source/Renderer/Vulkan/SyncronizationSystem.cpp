@@ -13,6 +13,10 @@ namespace Engine::Renderer
 	{
 		ENGINE_TRACE("Creating Syncronization System");
 
+		m_ImageAvailableSemaphores.resize(m_Device->GetMaxFramesInFlight());
+		m_FinishedRendererSempahores.resize(m_Device->GetMaxFramesInFlight());
+		m_InFlightFences.resize(m_Device->GetMaxFramesInFlight());
+
 		VkSemaphoreCreateInfo semaphoreci{};
 		semaphoreci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		semaphoreci.flags = 0;
@@ -23,21 +27,21 @@ namespace Engine::Renderer
 		fenceci.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 		fenceci.pNext = nullptr;
 
-		VK_CHECK(vkCreateSemaphore(m_Device->GetNativeVulkanDevice(), &semaphoreci, nullptr, &m_ImageAvailable));
-		VK_CHECK(vkCreateSemaphore(m_Device->GetNativeVulkanDevice(), &semaphoreci, nullptr, &m_RenderFinished));
-		VK_CHECK(vkCreateFence(m_Device->GetNativeVulkanDevice(), &fenceci, nullptr, &m_FrameInFlight));
+		for (int i = 0; i < m_Device->GetMaxFramesInFlight(); i++)
+		{
+			VK_CHECK(vkCreateSemaphore(m_Device->GetNativeVulkanDevice(), &semaphoreci, nullptr, &m_ImageAvailableSemaphores[i]));
+			VK_CHECK(vkCreateSemaphore(m_Device->GetNativeVulkanDevice(), &semaphoreci, nullptr, &m_FinishedRendererSempahores[i]));
+			VK_CHECK(vkCreateFence(m_Device->GetNativeVulkanDevice(), &fenceci, nullptr, &m_InFlightFences[i]));
+		}
 	}
 
 	SyncronizationSystem::~SyncronizationSystem()
 	{
-		vkDestroySemaphore(m_Device->GetNativeVulkanDevice(), m_ImageAvailable, nullptr);
-		vkDestroySemaphore(m_Device->GetNativeVulkanDevice(), m_RenderFinished, nullptr);
-		vkDestroyFence(m_Device->GetNativeVulkanDevice(), m_FrameInFlight, nullptr);
-	}
-
-	void SyncronizationSystem::WaitForPreviousRender()
-	{
-		vkWaitForFences(m_Device->GetNativeVulkanDevice(), 1, &m_FrameInFlight, VK_TRUE, UINT64_MAX);
-		vkResetFences(m_Device->GetNativeVulkanDevice(), 1, &m_FrameInFlight);
+		for (int i = 0; i < m_Device->GetMaxFramesInFlight(); i++)
+		{
+			vkDestroySemaphore(m_Device->GetNativeVulkanDevice(), m_ImageAvailableSemaphores[i], nullptr);
+			vkDestroySemaphore(m_Device->GetNativeVulkanDevice(), m_FinishedRendererSempahores[i], nullptr);
+			vkDestroyFence(m_Device->GetNativeVulkanDevice(), m_InFlightFences[i], nullptr);
+		}
 	}
 }

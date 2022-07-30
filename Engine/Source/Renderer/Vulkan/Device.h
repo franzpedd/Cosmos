@@ -56,6 +56,9 @@ namespace Engine::Renderer
 		// returns a reference for the extensions list
 		inline const std::vector<const char*>& GetExtensions() const { m_Extensions; }
 
+		// returns the max quantity of frames that can be asynchronously processed at a given time
+		inline const int GetMaxFramesInFlight() { return m_MaxFramesInFlight; }
+
 	public:
 
 		// populates a swapchain details by a given device capabilities and properties
@@ -88,5 +91,6 @@ namespace Engine::Renderer
 		VkQueue m_GraphicsQueue = VK_NULL_HANDLE;
 		VkQueue m_PresentQueue = VK_NULL_HANDLE;
 		const std::vector<const char*> m_Extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+		const int m_MaxFramesInFlight = 2; // increase may cause frames of lattency
 	};
 }

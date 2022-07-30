@@ -26,10 +26,17 @@ namespace Engine
 		m_WindowCount++;
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 		m_Window = glfwCreateWindow(static_cast<int>(m_Width), static_cast<int>(m_Height), m_Title, nullptr, nullptr);
 		ENGINE_ASSERT(m_Window != nullptr, "GLFW window creation has failed");
+
+		glfwSetWindowUserPointer(m_Window, this);
+
+		glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+			{
+				auto windowapp = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+				windowapp->SetResized(true);
+			});
 	}
 
 	Window::~Window()
@@ -50,6 +57,11 @@ namespace Engine
 	bool Window::ShouldClose()
 	{
 		return glfwWindowShouldClose(m_Window);
+	}
+
+	void Window::WaitEvents()
+	{
+		glfwWaitEvents();
 	}
 
 	const char** Window::GetInstanceExtensions(uint32_t* count)

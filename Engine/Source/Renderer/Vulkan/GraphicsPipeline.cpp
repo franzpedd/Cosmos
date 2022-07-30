@@ -29,7 +29,7 @@ namespace Engine::Renderer
 
 		CreateRenderPass();
 		CreateGraphicsPipeline();
-		CreateFrameBuffers();
+		CreateFramebuffers();
 		CreateCommandPool();
 		CreateCommandBuffer();
 	}
@@ -38,7 +38,7 @@ namespace Engine::Renderer
 	{
 		vkDestroyCommandPool(m_Device->GetNativeVulkanDevice(), m_CommandPool, nullptr);
 
-		for (auto framebuffer : m_SwapchainFrameuffers)
+		for (auto framebuffer : m_SwapchainFramebuffers)
 		{
 			vkDestroyFramebuffer(m_Device->GetNativeVulkanDevice(), framebuffer, nullptr);
 		}
@@ -262,9 +262,9 @@ namespace Engine::Renderer
 		VK_CHECK(vkCreateGraphicsPipelines(m_Device->GetNativeVulkanDevice(), VK_NULL_HANDLE, 1, &gpipelineci, nullptr, &m_Pipeline));
 	}
 
-	void GraphicsPipeline::CreateFrameBuffers()
+	void GraphicsPipeline::CreateFramebuffers()
 	{
-		m_SwapchainFrameuffers.resize(m_Swapchain->GetSwapchainImageViews().size());
+		m_SwapchainFramebuffers.resize(m_Swapchain->GetSwapchainImageViews().size());
 
 		for (size_t i = 0; i < m_Swapchain->GetSwapchainImageViews().size(); i++)
 		{
@@ -281,7 +281,7 @@ namespace Engine::Renderer
 			ci.height = m_Swapchain->GetSwapchainExtent2D().height;
 			ci.layers = 1;
 
-			VK_CHECK(vkCreateFramebuffer(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_SwapchainFrameuffers[i]));
+			VK_CHECK(vkCreateFramebuffer(m_Device->GetNativeVulkanDevice(), &ci, nullptr, &m_SwapchainFramebuffers[i]));
 		}
 	}
 
@@ -300,14 +300,16 @@ namespace Engine::Renderer
 
 	void GraphicsPipeline::CreateCommandBuffer()
 	{
+		m_CommandBuffers.resize(m_Device->GetMaxFramesInFlight());
+
 		VkCommandBufferAllocateInfo alloc{};
 		alloc.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		alloc.pNext = nullptr;
 		alloc.commandPool = m_CommandPool;
 		alloc.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		alloc.commandBufferCount = 1;
+		alloc.commandBufferCount = static_cast<uint32_t>(m_CommandBuffers.size());
 
-		VK_CHECK(vkAllocateCommandBuffers(m_Device->GetNativeVulkanDevice(), &alloc, &m_CommandBuffer));
+		VK_CHECK(vkAllocateCommandBuffers(m_Device->GetNativeVulkanDevice(), &alloc, m_CommandBuffers.data()));
 	}
 
 	void GraphicsPipeline::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
@@ -318,7 +320,7 @@ namespace Engine::Renderer
 		commandBegin.flags = 0;
 		commandBegin.pInheritanceInfo = nullptr;
 
-		VK_CHECK(vkBeginCommandBuffer(m_CommandBuffer, &commandBegin));
+		VK_CHECK(vkBeginCommandBuffer(commandBuffer, &commandBegin));
 
 		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
 
@@ -326,7 +328,7 @@ namespace Engine::Renderer
 		renderpassBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderpassBegin.pNext = nullptr;
 		renderpassBegin.renderPass = m_RenderPass;
-		renderpassBegin.framebuffer = m_SwapchainFrameuffers[imageIndex];
+		renderpassBegin.framebuffer = m_SwapchainFramebuffers[imageIndex];
 		renderpassBegin.renderArea.offset = { 0,0 };
 		renderpassBegin.renderArea.extent = m_Swapchain->GetSwapchainExtent2D();
 		renderpassBegin.clearValueCount = 1;
@@ -344,17 +346,25 @@ namespace Engine::Renderer
 		scissor.offset = { 0, 0 };
 		scissor.extent = m_Swapchain->GetSwapchainExtent2D();
 
-		vkCmdBeginRenderPass(m_CommandBuffer, &renderpassBegin, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(commandBuffer, &renderpassBegin, VK_SUBPASS_CONTENTS_INLINE);
 
-		vkCmdBindPipeline(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
 
-		vkCmdSetViewport(m_CommandBuffer, 0, 1, &viewport);
-		vkCmdSetScissor(m_CommandBuffer, 0, 1, &scissor);
+		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-		vkCmdDraw(m_CommandBuffer, 3, 1, 0, 0);
+		vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
-		vkCmdEndRenderPass(m_CommandBuffer);
+		vkCmdEndRenderPass(commandBuffer);
 
-		VK_CHECK(vkEndCommandBuffer(m_CommandBuffer));
+		VK_CHECK(vkEndCommandBuffer(commandBuffer));
+	}
+
+	void GraphicsPipeline::CleanFramebuffers()
+	{
+		for (auto framebuffer : m_SwapchainFramebuffers)
+		{
+			vkDestroyFramebuffer(m_Device->GetNativeVulkanDevice(), framebuffer, nullptr);
+		}
 	}
 }
